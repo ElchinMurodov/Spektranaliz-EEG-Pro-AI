@@ -132,15 +132,52 @@ def cmd_cluster(args):
     Xs = std.transform(X)
     km = ml.KMeans(k=args.k, seed=args.seed).fit(Xs)
     print("\nKMeans (k=%d) | inersiya=%.2f" % (args.k, km.inertia_))
+
+    from eeg_engine import classifier
     groups = {}
     for i, lab in enumerate(km.labels_):
-        groups.setdefault(lab, []).append(files[i])
+        groups.setdefault(lab, []).append(i)
+
+    band_idx = {b: dataset.STATIC_FEATURES.index("rp_" + b)
+                for b in ("delta", "theta", "alpha", "beta", "gamma")}
+
     for c in sorted(groups):
-        print("\n  Klaster %d (%d ta yozuv):" % (c, len(groups[c])))
-        for f in groups[c]:
-            print("     - %s" % f)
-    print("\nEslatma: klasterlarni ekspert (nevrolog) holat nomlari bilan "
-          "moslab, keyin 'train' bilan nazoratli model qurish mumkin.")
+        members = groups[c]
+        # klaster bo'yicha o'rtacha (xom, standartlashtirilmagan) belgilar
+        meanvec = [sum(X[i][j] for i in members) / len(members)
+                   for j in range(len(names))]
+        # statik qism -> features dict -> qoidaviy taxminiy holat
+        fdict = {dataset.STATIC_FEATURES[j]: meanvec[j]
+                 for j in range(len(dataset.STATIC_FEATURES))}
+        try:
+            suggested = classifier.classify(fdict)["state"]
+        except Exception:
+            suggested = "?"
+        print("\n" + "=" * 60)
+        print("  KLASTER %d  |  %d ta yozuv  |  taxminiy holat: %s"
+              % (c, len(members), suggested))
+        print("  " + "-" * 56)
+        prof = "  ".join("%s=%.0f%%" % (b.capitalize(), meanvec[band_idx[b]] * 100)
+                         for b in ("delta", "theta", "alpha", "beta", "gamma"))
+        print("  Spektral profil: " + prof)
+        for i in members:
+            print("     - %s" % files[i])
+
+    if args.pca:
+        coords = ml.pca_2d(Xs)
+        import csv as _csv
+        with open(args.pca, "w", newline="", encoding="utf-8") as fh:
+            w = _csv.writer(fh)
+            w.writerow(["file", "cluster", "pc1", "pc2"])
+            for i in range(len(files)):
+                w.writerow([files[i], km.labels_[i],
+                            "%.4f" % coords[i][0], "%.4f" % coords[i][1]])
+        print("\n2D PCA koordinatalari yozildi -> %s "
+              "(lokalda scatter-plot chizish uchun)" % args.pca)
+
+    print("\nKEYINGI QADAM: yuqoridagi 'taxminiy holat' va spektral profilga "
+          "qarab, har klasterni nevrolog sifatida nomlang (masalan labels.csv "
+          "da). So'ng 'train' bilan nazoratli model quramiz.")
     return 0
 
 
@@ -192,6 +229,7 @@ def build_parser():
     pc.add_argument("path")
     pc.add_argument("-k", type=int, default=3)
     pc.add_argument("--no-dynamic", action="store_true")
+    pc.add_argument("--pca", metavar="FAYL", help="2D PCA koordinatalarini CSV ga yozish")
     pc.add_argument("--seed", type=int, default=42)
     pc.set_defaults(func=cmd_cluster)
 

@@ -115,6 +115,68 @@ def _dist2(a, b):
 
 
 # ===========================================================================
+# PCA (2D proyeksiya) — klasterlarni vizualizatsiya qilish uchun (sof Python)
+# ===========================================================================
+def _jacobi_eigen(A, iters=200, tol=1e-12):
+    """Simmetrik matritsa uchun Jacobi eigen-dekompozitsiyasi.
+    Qaytaradi: (eigenvalues, eigenvectors) — ustunlar xususiy vektorlar."""
+    n = len(A)
+    a = [row[:] for row in A]
+    v = [[1.0 if i == j else 0.0 for j in range(n)] for i in range(n)]
+    for _ in range(iters):
+        p, q, off = 0, 1, 0.0
+        for i in range(n):
+            for j in range(i + 1, n):
+                if abs(a[i][j]) > off:
+                    off = abs(a[i][j]); p, q = i, j
+        if off < tol:
+            break
+        app, aqq, apq = a[p][p], a[q][q], a[p][q]
+        phi = 0.5 * math.atan2(2.0 * apq, app - aqq)
+        c, s = math.cos(phi), math.sin(phi)
+        for k in range(n):
+            akp, akq = a[k][p], a[k][q]
+            a[k][p] = c * akp - s * akq
+            a[k][q] = s * akp + c * akq
+        for k in range(n):
+            apk, aqk = a[p][k], a[q][k]
+            a[p][k] = c * apk - s * aqk
+            a[q][k] = s * apk + c * aqk
+        for k in range(n):
+            vkp, vkq = v[k][p], v[k][q]
+            v[k][p] = c * vkp - s * vkq
+            v[k][q] = s * vkp + c * vkq
+    return [a[i][i] for i in range(n)], v
+
+
+def pca_2d(X):
+    """Belgilar matritsasini 2 ta asosiy komponentga proyeksiyalaydi.
+    Qaytaradi: [(pc1, pc2), ...] — har yozuv uchun 2D koordinata."""
+    n = len(X)
+    if n == 0:
+        return []
+    d = len(X[0])
+    mean = [sum(X[i][j] for i in range(n)) / n for j in range(d)]
+    Xc = [[X[i][j] - mean[j] for j in range(d)] for i in range(n)]
+    denom = (n - 1) if n > 1 else 1
+    cov = [[0.0] * d for _ in range(d)]
+    for aa in range(d):
+        for bb in range(aa, d):
+            sv = sum(Xc[i][aa] * Xc[i][bb] for i in range(n)) / denom
+            cov[aa][bb] = sv; cov[bb][aa] = sv
+    evals, evecs = _jacobi_eigen(cov)
+    order = sorted(range(d), key=lambda j: evals[j], reverse=True)[:2]
+    pc1 = [evecs[r][order[0]] for r in range(d)]
+    pc2 = [evecs[r][order[1]] for r in range(d)]
+    coords = []
+    for i in range(n):
+        x1 = sum(Xc[i][r] * pc1[r] for r in range(d))
+        x2 = sum(Xc[i][r] * pc2[r] for r in range(d))
+        coords.append((x1, x2))
+    return coords
+
+
+# ===========================================================================
 # CART qaror daraxti (Gini)
 # ===========================================================================
 class _Node:
