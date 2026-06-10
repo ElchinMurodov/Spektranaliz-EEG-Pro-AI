@@ -129,6 +129,14 @@ def build_report(rec, spec, features, classification, calibrated=False, fancy=Tr
             A("      - %s" % r)
         A("      => Mutaxassis (nevrolog) ko'rigi tavsiya etiladi.")
 
+    # --- Funksional/ruhiy holat baholash (assessment) ---
+    try:
+        from . import assessment
+        for line in assessment.assessment_section(features, fancy=fancy):
+            A(line)
+    except Exception:
+        pass
+
     # --- Disclaimer ---
     A("")
     A(sub)
