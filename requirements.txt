@@ -23,3 +23,13 @@ reportlab
 
 # --- .exe yasash uchun (faqat ishlab chiqaruvchiga) ---
 pyinstaller
+
+
+# --- AI / mashinaviy o'qitish (ixtiyoriy) ---
+# eeg_engine/ml.py va train_ai.py SOF PYTHON da yozilgan — quyidagilarsiz ham
+# ishlaydi (Random Forest, KMeans, cross-validatsiya, permutation importance).
+# Quyidagilar faqat train_advanced.py (sklearn/SHAP) va eegnet.py (chuqur
+# o'qitish) uchun, LOKAL kuchaytirilgan o'qitishda kerak bo'ladi:
+scikit-learn
+shap
+tensorflow

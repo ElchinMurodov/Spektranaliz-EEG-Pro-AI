@@ -235,3 +235,23 @@ bosqich uchun.
 > **Eslatma:** AI moduli ham tibbiy tashxis bermaydi — u funksional holatni
 > spektral/dinamik belgilardan baholaydi. Yorliqlar sifati va miqdori model
 > ishonchliligini belgilaydi.
+
+
+### 6.7. Birlashtirilgan CLI (qoidaviy + vaqt-chastota + AI bir buyruqda)
+
+Asosiy `cli.py` endi yangi bosqichlarni ham qamrab oladi:
+
+```bash
+# Qoidaviy hisobot + vaqt-chastota dinamikasi + AI bashorati (bir buyruqda)
+python3 cli.py data/synth_stress_100hz.edf --timefreq --model model.json
+```
+
+Natijada ketma-ket chiqadi:
+1. **Qoidaviy tahlil** (8 holat, ball + softmax ishonch) — baseline,
+2. **Vaqt-chastota dinamikasi** (`--timefreq`) — har ritm quvvatining vaqt
+   bo'yicha o'rtacha/o'zgaruvchanlik/trend (↑/↓/→),
+3. **AI bashorati** (`--model`) — o'qitilgan Random Forest natijasi va barcha
+   sinflar bo'yicha ehtimollik (qoidaviy natija bilan solishtirish uchun).
+
+> Shunday qilib, dissertatsiyaning **qoidaviy vs AI** taqqosi bitta buyruq bilan
+> ko'rsatiladi.
