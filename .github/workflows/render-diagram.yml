@@ -1,0 +1,63 @@
+name: Render diagram (SVG -> PNG/JPG)
+
+# docs/ ichidagi SVG blok-sxemalarni yuqori sifatli PNG va JPG ga aylantiradi.
+# Sabab: rasm-render vositalari (rsvg/ImageMagick) bu yerda emas, GitHub
+# runnerlarida o'rnatiladi. Natija fayllar docs/ ga commit qilinadi va
+# artefakt sifatida ham yuklanadi.
+on:
+  push:
+    paths:
+      - 'docs/**.svg'
+      - '.github/workflows/render-diagram.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repozitoriyni olish
+        uses: actions/checkout@v4
+
+      - name: Render vositalarini o'rnatish
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends librsvg2-bin imagemagick
+
+      - name: SVG -> PNG (2x) va JPG
+        run: |
+          cd docs
+          shopt -s nullglob
+          for f in *.svg; do
+            base="${f%.svg}"
+            echo "Rendering $f ..."
+            # 2x masshtab — chop etish/dissertatsiya uchun yuqori aniqlik
+            rsvg-convert -z 2 -b white -o "${base}.png" "$f"
+            # PNG -> JPG (oq fon, yuqori sifat)
+            convert "${base}.png" -background white -flatten -quality 92 "${base}.jpg"
+            echo "  -> ${base}.png, ${base}.jpg"
+          done
+          ls -la
+
+      - name: Rasmlarni artefakt sifatida yuklash
+        uses: actions/upload-artifact@v4
+        with:
+          name: blok-sxema-rasmlar
+          path: |
+            docs/*.png
+            docs/*.jpg
+          if-no-files-found: error
+
+      - name: PNG/JPG ni repozitoriyga commit qilish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/*.png docs/*.jpg
+          if git diff --cached --quiet; then
+            echo "O'zgarish yo'q."
+          else
+            git commit -m "docs: blok-sxema PNG/JPG (avtomatik render) [skip ci]"
+            git push
+          fi
