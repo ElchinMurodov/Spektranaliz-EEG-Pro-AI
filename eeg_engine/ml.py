@@ -243,19 +243,34 @@ class DecisionTree:
         best_gain, best_f, best_t = 0.0, None, None
         parent_imp = self._gini(y)
         n = len(y)
+        classes = self.classes_
         for f in feats:
-            vals = sorted(set(row[f] for row in X))
-            for i in range(len(vals) - 1):
-                t = 0.5 * (vals[i] + vals[i + 1])
-                ly, ry = [], []
-                for k in range(n):
-                    (ly if X[k][f] <= t else ry).append(y[k])
-                if not ly or not ry:
+            # belgini bir marta saralab, chegaralarni bitta o'tishda inkremental
+            # Gini bilan baholash (O(n) har belgi uchun) — tezlashtirilgan CART
+            order = sorted(range(n), key=lambda i: X[i][f])
+            sv = [X[i][f] for i in order]
+            sy = [y[i] for i in order]
+            left = {c: 0 for c in classes}
+            right = {c: 0 for c in classes}
+            for c in sy:
+                right[c] += 1
+            nl = 0
+            for j in range(n - 1):
+                c = sy[j]
+                left[c] += 1
+                right[c] -= 1
+                nl += 1
+                if sv[j] == sv[j + 1]:
                     continue
-                imp = (len(ly) * self._gini(ly) + len(ry) * self._gini(ry)) / n
+                nr = n - nl
+                gl = 1.0 - sum((left[c] / nl) ** 2 for c in classes)
+                gr = 1.0 - sum((right[c] / nr) ** 2 for c in classes)
+                imp = (nl * gl + nr * gr) / n
                 gain = parent_imp - imp
                 if gain > best_gain:
-                    best_gain, best_f, best_t = gain, f, t
+                    best_gain = gain
+                    best_f = f
+                    best_t = 0.5 * (sv[j] + sv[j + 1])
 
         if best_f is None:
             return self._leaf(y)

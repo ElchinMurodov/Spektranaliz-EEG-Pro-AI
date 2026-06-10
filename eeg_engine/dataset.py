@@ -19,6 +19,7 @@ Yorliqlar (labels):
 
 import os
 import csv as _csv
+import json
 
 from . import loader, preprocessing, spectral, features, timefreq, config
 
@@ -100,6 +101,16 @@ def load_labels_csv(path):
     return out
 
 
+def _cache_key(path, include_dynamic):
+    """Belgilar keshi kaliti: fayl yo'li + hajmi + mtime + dinamik bayrog'i."""
+    try:
+        st = os.stat(path)
+        sig = "%d_%d" % (st.st_size, int(st.st_mtime))
+    except OSError:
+        sig = "0_0"
+    return "%s|%s|dyn=%s" % (os.path.abspath(path), sig, include_dynamic)
+
+
 def _list_eeg_files(path):
     if os.path.isfile(path):
         return [path]
@@ -114,7 +125,7 @@ def _list_eeg_files(path):
 
 def build_dataset(path, labels_csv=None, infer_from_name=False,
                   include_dynamic=True, fs=None, target_fs=None, notch=True,
-                  verbose=True):
+                  verbose=True, cache=None):
     """
     Papka (yoki fayl) -> (feature_names, X, y, files, skipped).
 
@@ -122,18 +133,38 @@ def build_dataset(path, labels_csv=None, infer_from_name=False,
       * labels_csv berilsa — o'sha fayldan (haqiqiy ma'lumot uchun).
       * infer_from_name=True — fayl nomidan (sun'iy fayllar uchun).
       * ikkalasi ham yo'q -> y = [None, ...] (klasterlash / faqat belgilar uchun).
+
+    cache: JSON cache fayli yo'li (ixtiyoriy). Belgilar fayl yo'li + hajmi +
+    o'zgartirilgan vaqti bo'yicha keshlanadi — qayta hisoblashni tezlashtiradi
+    (masalan turli k bilan klasterlash yoki qayta o'qitishda).
     """
     files = _list_eeg_files(path)
     label_map = load_labels_csv(labels_csv) if labels_csv else {}
 
+    cache_data = {}
+    if cache and os.path.exists(cache):
+        try:
+            with open(cache, "r", encoding="utf-8") as fh:
+                cache_data = json.load(fh)
+        except Exception:
+            cache_data = {}
+
     names = FEATURE_NAMES if include_dynamic else STATIC_FEATURES
     X, y, used, skipped = [], [], [], []
+    cache_dirty = False
     for f in files:
         try:
-            rec = loader.load(f, fs=fs)
-            preprocessing.preprocess(rec, target_fs=target_fs, notch=notch)
-            spec = spectral.analyze_recording(rec)
-            _n, vec = feature_vector(rec, spec, include_dynamic=include_dynamic)
+            ck = _cache_key(f, include_dynamic)
+            if ck in cache_data:
+                vec = cache_data[ck]
+            else:
+                rec = loader.load(f, fs=fs)
+                preprocessing.preprocess(rec, target_fs=target_fs, notch=notch)
+                spec = spectral.analyze_recording(rec)
+                _n, vec = feature_vector(rec, spec, include_dynamic=include_dynamic)
+                if cache is not None:
+                    cache_data[ck] = vec
+                    cache_dirty = True
             label = None
             if label_map:
                 label = label_map.get(os.path.basename(f))
@@ -148,6 +179,13 @@ def build_dataset(path, labels_csv=None, infer_from_name=False,
             skipped.append((os.path.basename(f), str(e)))
             if verbose:
                 print("  ! skip %-28s (%s)" % (os.path.basename(f), e))
+
+    if cache is not None and cache_dirty:
+        try:
+            with open(cache, "w", encoding="utf-8") as fh:
+                json.dump(cache_data, fh)
+        except Exception:
+            pass
     return names, X, y, used, skipped
 
 

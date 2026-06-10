@@ -50,7 +50,7 @@ def _filter_labeled(X, y, files):
 def cmd_features(args):
     names, X, y, files, skipped = dataset.build_dataset(
         args.path, labels_csv=args.labels, infer_from_name=args.infer_name,
-        include_dynamic=not args.no_dynamic)
+        include_dynamic=not args.no_dynamic, cache=args.cache)
     has_labels = any(v is not None for v in y)
     dataset.write_feature_csv(args.out, names, X, files, y if has_labels else None)
     print("\nBelgilar matritsasi yozildi -> %s" % args.out)
@@ -63,7 +63,7 @@ def cmd_train(args):
     print("Ma'lumot tayyorlanmoqda...")
     names, X, y, files, skipped = dataset.build_dataset(
         args.path, labels_csv=args.labels, infer_from_name=args.infer_name,
-        include_dynamic=not args.no_dynamic)
+        include_dynamic=not args.no_dynamic, cache=args.cache)
     X, y, files = _filter_labeled(X, y, files)
     if len(X) < 4:
         print("XATO: yorliqlangan yozuvlar juda kam (%d). labels.csv yoki "
@@ -124,7 +124,7 @@ def cmd_train(args):
 def cmd_cluster(args):
     print("Ma'lumot tayyorlanmoqda (yorliqsiz)...")
     names, X, y, files, skipped = dataset.build_dataset(
-        args.path, include_dynamic=not args.no_dynamic)
+        args.path, include_dynamic=not args.no_dynamic, cache=args.cache)
     if len(X) < args.k:
         print("XATO: yozuvlar klaster sonidan kam.", file=sys.stderr)
         return 1
@@ -211,6 +211,7 @@ def build_parser():
     pf.add_argument("path")
     pf.add_argument("--labels"); pf.add_argument("--infer-name", action="store_true")
     pf.add_argument("--no-dynamic", action="store_true")
+    pf.add_argument("--cache", metavar="FAYL", help="belgilar keshi (qayta hisoblashni tezlashtiradi)")
     pf.add_argument("--out", default="features.csv")
     pf.set_defaults(func=cmd_features)
 
@@ -222,6 +223,7 @@ def build_parser():
     pt.add_argument("--trees", type=int, default=60)
     pt.add_argument("--depth", type=int, default=8)
     pt.add_argument("--imp-repeats", type=int, default=5)
+    pt.add_argument("--cache", metavar="FAYL", help="belgilar keshi (tezlashtiradi)")
     pt.add_argument("--seed", type=int, default=42)
     pt.set_defaults(func=cmd_train)
 
@@ -230,6 +232,7 @@ def build_parser():
     pc.add_argument("-k", type=int, default=3)
     pc.add_argument("--no-dynamic", action="store_true")
     pc.add_argument("--pca", metavar="FAYL", help="2D PCA koordinatalarini CSV ga yozish")
+    pc.add_argument("--cache", metavar="FAYL", help="belgilar keshi (tezlashtiradi)")
     pc.add_argument("--seed", type=int, default=42)
     pc.set_defaults(func=cmd_cluster)
 
