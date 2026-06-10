@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-cli.py — Spektranaliz EEG Pro dasturining buyruq qatori (CLI) interfeysi.
+cli.py — Spektranaliz EEG Pro AI dasturining buyruq qatori (CLI) interfeysi.
 
 GUI dan tashqari, dasturni terminalda (va skriptlarda) ham ishlatish mumkin.
 

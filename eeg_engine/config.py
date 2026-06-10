@@ -97,5 +97,6 @@ DISCLAIMER = (
     "malakali mutaxassis (nevrolog/EEG shifokori) tomonidan amalga oshiriladi."
 )
 
-APP_NAME = "Spektranaliz EEG Pro"
+APP_NAME = "Spektranaliz EEG Pro AI"
+APP_VERSION = "3.0.0"
 AUTHOR = "Murodov Elchin O‘ktamovich"

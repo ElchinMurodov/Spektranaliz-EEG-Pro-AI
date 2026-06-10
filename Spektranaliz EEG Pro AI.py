@@ -1,5 +1,5 @@
 """
-Spektranaliz EEG Pro — Sportchining EEG signallarini spektral tahlil qilish (GUI).
+Spektranaliz EEG Pro AI — Sportchining EEG signallarini spektral tahlil qilish (GUI).
 
 Bu dastur IKKI loyihaning birlashmasi va optimallashtirilgan ko'rinishi:
   * Dizayn va dastur tuzilishi  -> Spektranaliz-EEG-installation7 (Tkinter GUI,
@@ -38,7 +38,7 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-APP_NAME = "Spektranaliz EEG Pro"
+APP_NAME = "Spektranaliz EEG Pro AI"
 ICON_PATH = resource_path("spektranaliz-eeg-icon.ico")
 
 LOGO_LIGHT_PNG = resource_path("spektranaliz-eeg-logo.png")
