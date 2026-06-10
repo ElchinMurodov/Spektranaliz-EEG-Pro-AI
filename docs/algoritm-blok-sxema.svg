@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="1260" viewBox="0 0 960 1260" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#34495E"/>
+    </marker>
+  </defs>
+
+  <!-- fon -->
+  <rect x="0" y="0" width="960" height="1260" fill="#FFFFFF"/>
+
+  <!-- sarlavha -->
+  <text x="480" y="40" text-anchor="middle" font-size="26" font-weight="bold" fill="#1B3A6B">Spektranaliz EEG Pro AI — Algoritm blok-sxemasi</text>
+  <text x="480" y="66" text-anchor="middle" font-size="14" fill="#6B7280">Sportchining EEG signallarini spektral tahlil qilish · v3.0.0</text>
+
+  <!-- vertikal strelka chizig'i (umumiy) -->
+  <!-- A: BOSHLANISH -->
+  <rect x="160" y="92" width="640" height="52" rx="26" fill="#1B3A6B"/>
+  <text x="480" y="124" text-anchor="middle" font-size="15" font-weight="bold" fill="#FFFFFF">BOSHLANISH: EEG fayl (EDF / EDF+ / BDF / BDF+ / CSV)</text>
+  <line x1="480" y1="144" x2="480" y2="168" stroke="#34495E" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- B: Loader -->
+  <rect x="160" y="170" width="640" height="66" rx="10" fill="#EAF4FC" stroke="#3498DB" stroke-width="2.5"/>
+  <text x="480" y="194" text-anchor="middle" font-size="15" font-weight="bold" fill="#2471A3">1. Faylni o'qish — loader.load()</text>
+  <text x="184" y="218" font-size="13" fill="#2C3E50">Format avtomatik aniqlash · kanallar (10–20 tizimi) · namuna chastotasi (fs) · signal massivi</text>
+  <line x1="480" y1="236" x2="480" y2="260" stroke="#34495E" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- C: Preprocessing -->
+  <rect x="160" y="262" width="640" height="158" rx="10" fill="#E9F8EF" stroke="#27AE60" stroke-width="2.5"/>
+  <text x="480" y="286" text-anchor="middle" font-size="15" font-weight="bold" fill="#1E8449">2. Dastlabki qayta ishlash — preprocessing.preprocess()</text>
+  <text x="184" y="310" font-size="13" fill="#2C3E50">
+    <tspan x="184" dy="0">1) NaN/Inf interpolyatsiya          2) Robust artefakt cheklash (MAD)</tspan>
+    <tspan x="184" dy="20">3) Detrend (chiziqli trendni olib tashlash)</tspan>
+    <tspan x="184" dy="20">4) Band-pass filtr  0.5–45 Hz       5) Notch filtr  50/60 Hz (tarmoq shovqini)</tspan>
+    <tspan x="184" dy="20">6) Harmonizatsiya: resample → yagona target fs (anti-aliasing bilan)</tspan>
+    <tspan x="184" dy="20">7) z-score normalizatsiya</tspan>
+  </text>
+  <line x1="480" y1="420" x2="480" y2="444" stroke="#34495E" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- D: Spektral -->
+  <rect x="160" y="446" width="640" height="150" rx="10" fill="#FDF1E6" stroke="#E67E22" stroke-width="2.5"/>
+  <text x="480" y="470" text-anchor="middle" font-size="15" font-weight="bold" fill="#B9770E">3. Spektral tahlil — Welch PSD (har kanal uchun)</text>
+  <text x="184" y="494" font-size="13" fill="#2C3E50">
+    <tspan x="184" dy="0">• Segmentlash (2 s, 50% ustma-ust) + Hann oynasi</tspan>
+    <tspan x="184" dy="20">• |FFT|² periodogrammalarni o'rtachalash → barqaror PSD</tspan>
+    <tspan x="184" dy="20">• Ritm quvvatlari:  δ, θ, α, β, γ  (absolyut + nisbiy)</tspan>
+    <tspan x="184" dy="20">• Dominant chastota · Spektral chegara (edge 95%) · Spektral entropiya</tspan>
+  </text>
+  <line x1="480" y1="596" x2="480" y2="620" stroke="#34495E" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- E: Features -->
+  <rect x="160" y="622" width="640" height="130" rx="10" fill="#F4ECF9" stroke="#8E44AD" stroke-width="2.5"/>
+  <text x="480" y="646" text-anchor="middle" font-size="15" font-weight="bold" fill="#7D3C98">4. Belgilarni ajratish — features.extract_features()</text>
+  <text x="184" y="670" font-size="13" fill="#2C3E50">
+    <tspan x="184" dy="0">• Nisbiy quvvatlar rp_δ … rp_γ · Nisbatlar:  α/β, θ/β, θ/α, β/α</tspan>
+    <tspan x="184" dy="20">• Engagement (jalb) indeksi = β / (α + θ)</tspan>
+    <tspan x="184" dy="20">• iAPF (oksipital alfa cho'qqisi) · FAA (frontal alfa asimmetriyasi)</tspan>
+    <tspan x="184" dy="20">• FMT (frontal-median teta)</tspan>
+  </text>
+  <line x1="480" y1="752" x2="480" y2="776" stroke="#34495E" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- F: Kalibrlash (ixtiyoriy, dashed) -->
+  <rect x="160" y="778" width="640" height="58" rx="10" fill="#F2F4F4" stroke="#7F8C8D" stroke-width="2.5" stroke-dasharray="7 5"/>
+  <text x="480" y="802" text-anchor="middle" font-size="15" font-weight="bold" fill="#566573">4b. (ixtiyoriy) Individual kalibrlash — baseline ayirish</text>
+  <text x="480" y="822" text-anchor="middle" font-size="13" fill="#2C3E50">agar 'baseline' (tinch holat o'lchovi) berilgan bo'lsa qo'llanadi</text>
+  <line x1="480" y1="836" x2="480" y2="860" stroke="#34495E" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- G: Klassifikatsiya -->
+  <rect x="160" y="862" width="640" height="162" rx="10" fill="#FBECEA" stroke="#C0392B" stroke-width="2.5"/>
+  <text x="480" y="886" text-anchor="middle" font-size="15" font-weight="bold" fill="#A93226">5. Funksional holatni aniqlash — classifier.classify()</text>
+  <text x="184" y="909" font-size="13" fill="#2C3E50">
+    <tspan x="184" dy="0">• score_states(): 8 holat uchun 0–100 vaznli ball (belgilar yig'indisi)</tspan>
+    <tspan x="184" dy="19">• Softmax → ishonch ehtimolligi (confidence)</tspan>
+    <tspan x="184" dy="19">• Eng yuqori ball → yakuniy holat</tspan>
+    <tspan x="184" dy="19">• detect_atypical(): atipik naqsh ogohlantirishi (tashxis emas)</tspan>
+    <tspan x="184" dy="19" font-style="italic" fill="#7B241C">Holatlar: Normal, Fokus, Charchoq, Uyquga moyillik, Uyqusizlik,</tspan>
+    <tspan x="184" dy="17" font-style="italic" fill="#7B241C">Qo'zg'alish/Xayojonlanish, Stress, Meditativ</tspan>
+  </text>
+  <line x1="480" y1="1024" x2="480" y2="1048" stroke="#34495E" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- H: Hisobot -->
+  <rect x="160" y="1050" width="640" height="68" rx="10" fill="#E7F7F3" stroke="#16A085" stroke-width="2.5"/>
+  <text x="480" y="1074" text-anchor="middle" font-size="15" font-weight="bold" fill="#117A65">6. Hisobot va eksport — report / visualize</text>
+  <text x="480" y="1098" text-anchor="middle" font-size="13" fill="#2C3E50">Matnli hisobot · TXT / HTML (SVG grafik) / PDF · DIQQAT: natija tibbiy tashxis EMAS</text>
+  <line x1="480" y1="1118" x2="480" y2="1142" stroke="#34495E" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- I: NATIJA -->
+  <rect x="160" y="1144" width="640" height="52" rx="26" fill="#1B3A6B"/>
+  <text x="480" y="1176" text-anchor="middle" font-size="15" font-weight="bold" fill="#FFFFFF">NATIJA: funksional holat + ishonch + ritm grafiklar + hisobot</text>
+
+  <!-- izoh / muallif -->
+  <text x="480" y="1230" text-anchor="middle" font-size="12" fill="#9AA3AF">Muallif: Murodov Elchin O'ktamovich · eeg_engine pipeline (loader → preprocessing → spectral → features → classifier → report)</text>
+</svg>
