@@ -1,4 +1,6 @@
-# Spektranaliz EEG Pro
+# Spektranaliz EEG Pro AI
+
+**Versiya: 3.0.0**
 
 **Sportchining Elektroensefalografik (EEG) signallarini spektral tahlil qilish algoritmi va dasturiy vositasi**
 
@@ -72,8 +74,8 @@ Ushbu dastur ikki loyihaning **birlashtirilgan va optimallashtirilgan** ko'rinis
 ## 3. Loyiha tuzilishi
 
 ```
-Spektranaliz-EEG-Pro/
-├── Spektranaliz EEG Pro.py     # Tkinter GUI (installation7 dizayni) -> eeg_engine ga ulangan
+Spektranaliz-EEG-Pro-AI/
+├── Spektranaliz EEG Pro AI.py  # Tkinter GUI (installation7 dizayni) -> eeg_engine ga ulangan
 ├── cli.py                      # Buyruq qatori interfeysi
 ├── eeg_engine/                 # BIRLASHTIRILGAN tahlil yadrosi (sof Python)
 │   ├── config.py               # ritmlar, zonalar, 8 holat, sozlamalar
@@ -106,7 +108,7 @@ Spektranaliz-EEG-Pro/
 ### GUI (asosiy dastur)
 ```bash
 pip install -r requirements.txt        # tavsiya etiladi (GUI uchun pillow shart)
-python "Spektranaliz EEG Pro.py"
+python "Spektranaliz EEG Pro AI.py"
 ```
 "Fayl tanlash" → EEG faylni tanlang → "Natijani olish". Natijalar oynasida natija **tablarga ajratilgan** chiroyli grafiklarda chiqadi: **Umumiy · Spektr (PSD) · Topografiya · Kanallar**. Pastdagi **HTML / PDF / TXT** tugmalari yoki yuqori menyu orqali eksport qiling. Menyu (Vositalar) orqali: **rang temasi** (Akademik/Zamonaviy), **individual kalibrlash (baseline)** va **harmonizatsiya** chastotasi.
 
@@ -125,7 +127,7 @@ python tools/make_synthetic.py     # data/ ichida turli holatdagi EEG yaratadi
 ```
 
 ### Windows `.exe` va o'rnatuvchi
-`build.bat` ni ishga tushiring (Python 3.10+ kerak). Natija: `dist/Spektranaliz EEG Pro/Spektranaliz EEG Pro.exe` va (Inno Setup bo'lsa) `installer/Spektranaliz-EEG-Pro-Setup.exe`.
+`build.bat` ni ishga tushiring (Python 3.10+ kerak). Natija: `dist/Spektranaliz EEG Pro AI/Spektranaliz EEG Pro AI.exe` va (Inno Setup bo'lsa) `installer/Spektranaliz-EEG-Pro-AI-Setup.exe`.
 
 ---
 

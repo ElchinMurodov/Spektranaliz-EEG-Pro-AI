@@ -1,10 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""PyInstaller spetsifikatsiya fayli - 'Spektranaliz EEG Pro' dasturi uchun.
+"""PyInstaller spetsifikatsiya fayli - 'Spektranaliz EEG Pro AI' dasturi uchun.
 
 Yig'ish:
     pyinstaller spektranaliz_eeg_pro.spec
 
-Natija: dist/Spektranaliz EEG Pro/Spektranaliz EEG Pro.exe (onedir).
+Natija: dist/Spektranaliz EEG Pro AI/Spektranaliz EEG Pro AI.exe (onedir).
 Resurslar (fon, ikona, logolar) va eeg_engine paketi .exe yoniga bundle qilinadi.
 """
 
@@ -60,7 +60,7 @@ hiddenimports = [
 ]
 
 a = Analysis(
-    ["Spektranaliz EEG Pro.py"],
+    ["Spektranaliz EEG Pro AI.py"],
     pathex=[],
     binaries=[],
     datas=datas,
@@ -82,7 +82,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="Spektranaliz EEG Pro",
+    name="Spektranaliz EEG Pro AI",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -104,6 +104,6 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name="Spektranaliz EEG Pro",
+    name="Spektranaliz EEG Pro AI",
     contents_directory=".",
 )

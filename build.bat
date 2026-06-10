@@ -1,6 +1,6 @@
 @echo off
 REM ===========================================================================
-REM  Spektranaliz EEG Pro - avtomatik .exe yig'uvchi skript (Windows)
+REM  Spektranaliz EEG Pro AI - avtomatik .exe yig'uvchi skript (Windows)
 REM  Mualliflik: Murodov Elchin O'ktamovich
 REM
 REM  Bu skript:
@@ -17,7 +17,7 @@ cd /d "%~dp0"
 
 echo.
 echo ============================================================
-echo   Spektranaliz EEG Pro - .exe yig'ish jarayoni boshlandi
+echo   Spektranaliz EEG Pro AI - .exe yig'ish jarayoni boshlandi
 echo ============================================================
 echo.
 
@@ -61,7 +61,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [TAYYOR] .exe yaratildi: dist\Spektranaliz EEG Pro\Spektranaliz EEG Pro.exe
+echo [TAYYOR] .exe yaratildi: dist\Spektranaliz EEG Pro AI\Spektranaliz EEG Pro AI.exe
 echo.
 
 echo [5/5] O'rnatuvchi (setup.exe) tekshirilmoqda...
@@ -73,7 +73,7 @@ if defined ISCC (
     echo Inno Setup topildi. O'rnatuvchi yasalmoqda...
     "!ISCC!" installer.iss
     echo.
-    echo [TAYYOR] O'rnatuvchi yaratildi: installer\Spektranaliz-EEG-Pro-Setup.exe
+    echo [TAYYOR] O'rnatuvchi yaratildi: installer\Spektranaliz-EEG-Pro-AI-Setup.exe
 ) else (
     echo [MA'LUMOT] Inno Setup topilmadi.
     echo            https://jrsoftware.org/isdl.php dan Inno Setup 6 o'rnating.
